@@ -1,0 +1,28 @@
+version: '3.7'
+services:
+
+  app:
+    image: addityar/wordpress:v1
+    ports:
+      - "8080:8080"
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      update_config:
+        order: start-first
+        parallelism: 1
+        failure_action: rollback
+        delay: 10s
+      rollback_config:
+        parallelism: 0
+        order: stop-first
+    healthcheck:
+      test: curl -sS http://localhost:8080 || exit 1
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 40s

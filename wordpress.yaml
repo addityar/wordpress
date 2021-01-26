@@ -1,0 +1,24 @@
+---
+- hosts: server
+
+  tasks:
+
+    - name: git clone & pull project
+      git:
+        repo: 'https://github.com/addityar/wordpress.git'
+        dest: /docker/wordpress/wordpress
+        version: 'main'
+        force: yes
+        update: yes
+
+    - name: build wordpress docker image
+      command: docker build -t 'addityar/wordpress:v1' /docker/wordpress/
+
+    - name: run mysql image
+      command: cd /docker/mysql/ && docker-compose up -d
+
+    - name: restore database 
+      command: docker cp /docker/mysql/wordpress.sql mysql_db:/wordpress.sql && docker exec -it mysql_db mysql -u root -p"wordpress" < wordpress.sql
+
+    - name: deploy wordpress 
+      command: docker stack deploy -c deploy.yml wordpress
