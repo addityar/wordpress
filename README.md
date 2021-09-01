@@ -1,4 +1,4 @@
-Deploy Wordpress using Docker
+Deploy Wordpress using Docker.
 
 <b>Must be on your device</b>
 
